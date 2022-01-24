@@ -124,9 +124,6 @@ def main():
         level=log_dict["level"],
     )
 
-    logger.info("")
-    logger.info("")
-    logger.info("")
     logger.info("START START START")
     logger.info(
         "%s %s (%s)",
@@ -135,9 +132,9 @@ def main():
         app_dict["date"],
     )
 
-    logger.info("Running speedtest.py...")
+    logger.info("Running speedtest...")
     try:
-        process = subprocess.run(["./speedtest.py", "--json"], check=True, capture_output=True)
+        process = subprocess.run(["/usr/local/bin/speedtest", "-f", "json"], check=True, capture_output=True)
         speedtest_results = json.loads(process.stdout.decode("utf-8"))
         logger.debug("speedtest_results==%s", pretty_print(speedtest_results))
 
@@ -148,11 +145,29 @@ def main():
 
     if speedtest_results is not None:
         speedtest_list = {}
-        speedtest_list["datetime"] = datetime.now().isoformat("T")
-        speedtest_list["timestamp"] = int(time())
-        speedtest_list["download"] = speedtest_results["download"]
-        speedtest_list["upload"] = speedtest_results["upload"]
-        speedtest_list["ping"] = speedtest_results["ping"]
+        speedtest_list["datetime"] = speedtest_results["timestamp"]
+
+        # Need to convert datetime/timestamp to epoch int; Works better with Grafana
+        utc_time = datetime.strptime(speedtest_list["datetime"], "%Y-%m-%dT%H:%M:%SZ")
+        epoch_time = (utc_time - datetime(1970, 1, 1)).total_seconds()
+
+        speedtest_list["timestamp"] = int(epoch_time)
+        speedtest_list["ping_jitter"] = speedtest_results["ping"]["jitter"]
+        speedtest_list["ping_latency"] = speedtest_results["ping"]["latency"]
+        speedtest_list["download_bandwidth"] = speedtest_results["download"]["bandwidth"]
+        speedtest_list["download_bytes"] = speedtest_results["download"]["bytes"]
+        speedtest_list["download_elapsed"] = speedtest_results["download"]["elapsed"]
+        speedtest_list["upload_bandwidth"] = speedtest_results["upload"]["bandwidth"]
+        speedtest_list["upload_bytes"] = speedtest_results["upload"]["bytes"]
+        speedtest_list["upload_elapsed"] = speedtest_results["upload"]["elapsed"]
+        speedtest_list["packetloss"] = speedtest_results["packetLoss"]
+        speedtest_list["server_id"] = speedtest_results["server"]["id"]
+        speedtest_list["server_host"] = speedtest_results["server"]["host"]
+        speedtest_list["server_port"] = speedtest_results["server"]["port"]
+        speedtest_list["server_name"] = speedtest_results["server"]["name"]
+        speedtest_list["server_location"] = speedtest_results["server"]["location"]
+        speedtest_list["server_country"] = speedtest_results["server"]["country"]
+        speedtest_list["server_ip"] = speedtest_results["server"]["ip"]
 
         db_placeholders = ", ".join(["%s"] * len(speedtest_list))
         db_columns = ", ".join(speedtest_list.keys())
