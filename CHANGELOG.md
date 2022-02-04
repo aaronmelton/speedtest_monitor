@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.3.0] - 2022-02-04
+### Added
+- Added Dockerfile.
+### Changed
+- Changed path to the speedtest binary.  If you're not using Docker, you'll need
+  to install the speedtest binary on your computer and/or change the path.
+- Added the `--accept-license` argument to speedtest, otherwise it wouldn't work
+  if you haven't run speedtest and accepted the license prior to running the
+  Python script.
+- Renamed instances of bandwidth to throughput (what we're actually measuring).
+- Bumped bandit v1.7.1 -> v1.7.2
+
 ## [0.2.0] - 2022-01-24
 ### Added
 - Added schema structure to the project.

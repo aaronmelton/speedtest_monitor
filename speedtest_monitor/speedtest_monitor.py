@@ -134,7 +134,9 @@ def main():
 
     logger.info("Running speedtest...")
     try:
-        process = subprocess.run(["/usr/local/bin/speedtest", "-f", "json"], check=True, capture_output=True)
+        process = subprocess.run(
+            ["/usr/bin/speedtest", "--accept-license", "-f", "json"], check=True, capture_output=True
+        )
         speedtest_results = json.loads(process.stdout.decode("utf-8"))
         logger.debug("speedtest_results==%s", pretty_print(speedtest_results))
 

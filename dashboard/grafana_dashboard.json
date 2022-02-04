@@ -156,7 +156,7 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi"
         }
       },
       "pluginVersion": "8.3.0",
@@ -234,7 +234,7 @@
           },
           "expression": "$Download * 0.000008",
           "hide": false,
-          "refId": "Download Bandwidth",
+          "refId": "Download Throughput",
           "type": "math"
         },
         {
@@ -244,7 +244,7 @@
           },
           "expression": "$Upload * 0.000008",
           "hide": false,
-          "refId": "Upload Bandwidth",
+          "refId": "Upload Throughput",
           "type": "math"
         }
       ],
@@ -427,7 +427,7 @@
           },
           "expression": "$C * 0.000008",
           "hide": false,
-          "refId": "Avg",
+          "refId": "Average",
           "type": "math"
         }
       ],
@@ -610,7 +610,7 @@
           },
           "expression": "$C * 0.000008",
           "hide": false,
-          "refId": "Avg",
+          "refId": "Average",
           "type": "math"
         }
       ],
@@ -880,7 +880,7 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi"
         }
       },
       "pluginVersion": "8.3.0",
@@ -1010,7 +1010,7 @@
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "multi"
         }
       },
       "pluginVersion": "8.3.0",
@@ -1024,7 +1024,7 @@
           "group": [],
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  timestamp AS \"time\",\n  GREATEST(download_elapsed, upload_elapsed)\nFROM speedtest\nWHERE\n  $__unixEpochFilter(timestamp)\nORDER BY timestamp",
+          "rawSql": "SELECT\n  timestamp AS \"time\",\n  GREATEST(download_elapsed, upload_elapsed) AS \"Duration\"\nFROM speedtest\nWHERE\n  $__unixEpochFilter(timestamp)\nORDER BY timestamp",
           "refId": "A",
           "select": [
             [
@@ -1085,7 +1085,7 @@
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "download_bandwidth"
+              "options": "download_throughput"
             },
             "properties": [
               {
@@ -1101,13 +1101,21 @@
               {
                 "id": "unit",
                 "value": "Mbits"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 75
               }
             ]
           },
           {
             "matcher": {
               "id": "byRegexp",
-              "options": "upload_bandwidth"
+              "options": "upload_throughput"
             },
             "properties": [
               {
@@ -1123,6 +1131,14 @@
               {
                 "id": "unit",
                 "value": "Mbits"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 25
               }
             ]
           },
@@ -1145,6 +1161,14 @@
               {
                 "id": "unit",
                 "value": "ms"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 15
               }
             ]
           }
@@ -1185,7 +1209,7 @@
           "hide": false,
           "metricColumn": "none",
           "rawQuery": true,
-          "rawSql": "SELECT\n  timestamp AS \"time\",\n  (download_bandwidth * 0.000008) as download_bandwidth, (upload_bandwidth * 0.000008) as upload_bandwidth, ping_latency, server_id, server_host, server_port, server_ip\nFROM speedtest\nWHERE\n  $__unixEpochFilter(timestamp)\nORDER BY timestamp",
+          "rawSql": "SELECT\n  timestamp AS \"time\",\n  (download_bandwidth * 0.000008) as download_throughput, (upload_bandwidth * 0.000008) as upload_throughput, ping_latency, server_id, server_host, server_port, server_ip\nFROM speedtest\nWHERE\n  $__unixEpochFilter(timestamp)\nORDER BY timestamp",
           "refId": "A",
           "select": [
             [
@@ -1222,13 +1246,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Speedtest Monitor",
   "uid": "Pqf45Gxnz",
-  "version": 10,
+  "version": 19,
   "weekStart": ""
 }
