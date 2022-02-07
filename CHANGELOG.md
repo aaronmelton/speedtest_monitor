@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.3.1] - 2022-02-07
+### Changed
+- Dockerfile: Improved Dockerfile.
+- pyproject.toml: Reduced Docker image size by moving packages required for
+  dev only into [tool.poetry.dev-dependencies]
+- Bumped pbr (5.8.0 -> 5.8.1)
+
 ## [0.3.0] - 2022-02-04
 ### Added
 - Added Dockerfile.
