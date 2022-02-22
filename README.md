@@ -29,12 +29,15 @@ This repository contains the SQL schema and the Grafana dashboard JSON so you ca
 _(All Docker commands must be run from the cloned directory or you must specify the path and filename to docker-compose.yml.)_
 
 * To pull/build the necessary Docker images:
+
 `docker-compose build`
 
 * To run the application:
+
 `docker-compose run --rm speedtest_monitor`
 
 * To remove intermediate build images (no longer required after `docker-compose build`):
+
 `docker image prune --filter "label=prune=true"`
 
 #### Grafana
