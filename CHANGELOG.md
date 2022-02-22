@@ -1,5 +1,17 @@
 # CHANGELOG
 
+## [0.3.2] - 2022-02-22
+### Added
+- docker-compose.yml: Adding docker-compose file for ease of use.
+### Changed
+- README.md: Improving instructions for Docker.
+- Dockerfile: Adding pruning labels.
+- Updating click (8.0.3 -> 8.0.4)
+- Updating gitpython (3.1.26 -> 3.1.27)
+- Updating platformdirs (2.4.1 -> 2.5.1)
+- Updating typing-extensions (4.0.1 -> 4.1.1)
+
+
 ## [0.3.1] - 2022-02-07
 ### Changed
 - Dockerfile: Improved Dockerfile.

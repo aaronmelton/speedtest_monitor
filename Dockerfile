@@ -6,6 +6,7 @@ ARG PYTHON_VER=3.10
 ARG APP_NAME=speedtest_monitor
 
 FROM python:${PYTHON_VER} AS base
+LABEL prune=true
 
 WORKDIR /usr/src/app
 
@@ -20,6 +21,7 @@ RUN poetry install --no-dev
 ###################
 
 FROM base AS test
+LABEL prune=true
 
 RUN poetry install
 

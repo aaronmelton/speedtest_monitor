@@ -8,12 +8,12 @@ import os
 # Application Variables
 app_dict = {
     "author": "Aaron Melton <aaron@aaronmelton.com>",
-    "date": "2022-02-07",
+    "date": "2022-02-22",
     "desc": "A Python script to capture speedtest JSON and insert it into a database.",
     "name": "speedtest_monitor.py",
     "title": "Speedtest Monitor",
     "url": "https://github.com/aaronmelton/speedtest_monitor",
-    "version": "v0.3.1",
+    "version": "v0.3.2",
 }
 
 # Logging Variables
