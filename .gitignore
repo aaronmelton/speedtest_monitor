@@ -1,7 +1,5 @@
 # Project files
-*.sublime-*
-speedtest_monitor/run.sh
-speedtest_monitor/speedtest
+.idea
 
 # Byte-compiled / optimized / DLL files
 **/__pycache__/

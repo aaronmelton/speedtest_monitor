@@ -3,30 +3,37 @@
 # -*- coding: utf-8 -*-
 #
 
-import os
+from dataclasses import dataclass
+from datetime import datetime
+from os import environ as os_environ
 
-# Application Variables
-app_dict = {
-    "author": "Aaron Melton <aaron@aaronmelton.com>",
-    "date": "2022-02-22",
-    "desc": "A Python script to capture speedtest JSON and insert it into a database.",
-    "name": "speedtest_monitor.py",
-    "title": "Speedtest Monitor",
-    "url": "https://github.com/aaronmelton/speedtest_monitor",
-    "version": "v0.3.2",
-}
 
-# Logging Variables
-log_dict = {
-    "level": os.environ.get("LOG_LEVEL"),
-    "path": os.environ.get("LOG_PATH"),
-    "prefix": os.environ.get("LOG_PREFIX"),
-}
+@dataclass
+class Config:  # pylint: disable=too-many-instance-attributes
+    """Class for Application variables."""
 
-# Database Variables
-db_dict = {
-    "host": os.environ.get("DB_HOST"),
-    "username": os.environ.get("DB_USERNAME"),
-    "password": os.environ.get("DB_PASSWORD"),
-    "schema": os.environ.get("DB_SCHEMA"),
-}
+    def __init__(self):
+        """Application Variables."""
+        self.app_dict = {
+            "author": "Aaron Melton <aaron@aaronmelton.com>",
+            "date": "2023-11-26",
+            "desc": "A Python script to capture speedtest JSON and insert it into a database.",
+            "title": "speedtest_monitor",
+            "url": "https://github.com/aaronmelton/speedtest_monitor",
+            "version": "0.4.0",
+        }
+
+        # Logging Variables
+        self.log_dict = {
+            "filename": f"""{os_environ.get("LOG_PATH", "log/")}{self.app_dict["title"]}_{datetime.now().strftime("%Y%m%d")}.log""",
+            "level": os_environ.get("LOG_LEVEL", "INFO"),
+            "path": os_environ.get("LOG_PATH", "log/"),
+        }
+
+        # Database Variables
+        self.db_dict = {
+            "host": os_environ.get("DB_HOST"),
+            "username": os_environ.get("DB_USERNAME"),
+            "password": os_environ.get("DB_PASSWORD"),
+            "schema": "speedtest",
+        }

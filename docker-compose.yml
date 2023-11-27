@@ -12,7 +12,6 @@ services:
       - DB_HOST=
       - DB_USERNAME=
       - DB_PASSWORD=
-      - DB_SCHEMA=
     container_name: speedtest_monitor
     network_mode: "bridge"
     volumes:
