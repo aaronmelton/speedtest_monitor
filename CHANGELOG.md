@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## [0.4.0] - 2023-11-26
+### Added
+- tests/test_class_Config.py: Poor excuse for a unit test file.
+### Changed
+- .gitignore: Updating project-specific files.
+- README.md: Minor clarification to the instructions.
+- pyproject.toml: Bumped Python to v3.12; Python functions consolidated into
+  a new code repository, aaron-common-libs, which is now imported into this
+  script; speedtest-cli is now installed via Poetry; Bumped all development
+  test packages to latest versions.
+- speedtest_monitor/config.py, speedtest_monitor/speedtest_monitor.py: 
+  Refactored most functions: Config, logging setup, SQL calls.
+### Removed
+- docker-compose.yml, Dockerfile: Is anyone using Docker to run a basic
+  Python script?
+- flake8: No longer required with changes to pyproject.toml
+
+
 ## [0.3.2] - 2022-02-22
 ### Added
 - docker-compose.yml: Adding docker-compose file for ease of use.
