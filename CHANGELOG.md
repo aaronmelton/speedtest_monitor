@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## [0.5.0] - 2024-03-20
+### Changed
+- Converted speedtest data type from list to dict.
+- Removing gitdb (4.0.11)
+- Removing gitpython (3.1.40)
+- Removing smmap (5.0.1)
+- Updating certifi (2023.11.17 -> 2024.2.2)
+- Updating urllib3 (2.1.0 -> 2.2.1)
+- Updating typing-extensions (4.8.0 -> 4.10.0)
+- Updating azure-core (1.29.5 -> 1.30.1)
+- Updating cryptography (41.0.5 -> 42.0.5)
+- Updating packaging (23.2 -> 24.0)
+- Updating pluggy (1.3.0 -> 1.4.0)
+- Updating astroid (3.0.1 -> 3.1.0)
+- Updating azure-storage-blob (12.19.0 -> 12.19.1)
+- Updating dill (0.3.7 -> 0.3.8)
+- Updating isort (5.12.0 -> 5.13.2)
+- Updating pathspec (0.11.2 -> 0.12.1)
+- Updating platformdirs (4.0.0 -> 4.2.0)
+- Updating pytest (7.4.3 -> 7.4.4)
+- Updating rich (13.7.0 -> 13.7.1)
+- Updating slack-sdk (3.26.0 -> 3.27.1)
+- Updating stevedore (5.1.0 -> 5.2.0)
+- Updating tomlkit (0.12.3 -> 0.12.4)
+- Updating aaron-common-libs (0.1.1 4688216 -> 0.1.2 4162593)
+- Updating bandit (1.7.5 -> 1.7.8)
+- Updating black (23.11.0 -> 23.12.1)
+- Updating coverage (7.3.2 -> 7.4.4)
+- Updating mysqlclient (2.2.0 -> 2.2.4)
+- Updating pylint (3.0.2 -> 3.1.0)
+- Updating pytest-env (1.1.1 -> 1.1.3)
+
+
 ## [0.4.0] - 2023-11-26
 ### Added
 - tests/test_class_Config.py: Poor excuse for a unit test file.

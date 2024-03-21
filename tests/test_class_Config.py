@@ -5,6 +5,7 @@
 # pylint: disable=invalid-name, duplicate-code
 
 from re import match as re_match
+
 from speedtest_monitor.config import Config
 
 

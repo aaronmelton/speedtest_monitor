@@ -6,7 +6,6 @@
 import json
 import subprocess
 import sys
-from datetime import datetime
 from time import perf_counter
 
 import MySQLdb  # pylint: disable=import-error
@@ -44,8 +43,7 @@ def db_query(db_deets, query, some_list):
     output_json = []
     database_connection = MySQLdb.connect(host, user, passwd, database)
     cursor = database_connection.cursor()
-    # If some_list is provided, this query will be writing changes to
-    # the database.
+    # If some_list is provided, this query will be writing changes to the database.
     if some_list:
         try:
             try:
@@ -63,8 +61,7 @@ def db_query(db_deets, query, some_list):
             logger.error("ERROR running query: %s", str(query))
             logger.exception("ERROR=='%s'", some_exception)
 
-    # If some_list is NOT provided, this query will be retrieving data
-    # from the database.
+    # If some_list is NOT provided, this query will be retrieving data from the database.
     if not some_list:
         try:
             logger.info("Querying database...")
@@ -118,35 +115,19 @@ def main():
         logger.exception("EXCEPTION='%s'", str(some_exception))
 
     if speedtest_results:
-        speedtest_list = {}
-        speedtest_list["datetime"] = speedtest_results["timestamp"]
+        speedtest_dict = {
+            "timestamp": speedtest_results["timestamp"],
+            "ping_latency": speedtest_results["ping"],
+            "download_bandwidth": speedtest_results["download"],
+            "upload_bandwidth": speedtest_results["upload"],
+            "server_id": speedtest_results["server"]["id"],
+            "server_host": speedtest_results["server"]["host"],
+        }
 
-        # Need to convert datetime/timestamp to epoch int; Works better with Grafana
-        utc_time = datetime.strptime(speedtest_list["datetime"], "%Y-%m-%dT%H:%M:%SZ")
-        epoch_time = (utc_time - datetime(1970, 1, 1)).total_seconds()
-
-        speedtest_list["timestamp"] = int(epoch_time)
-        speedtest_list["ping_jitter"] = speedtest_results["ping"]["jitter"]
-        speedtest_list["ping_latency"] = speedtest_results["ping"]["latency"]
-        speedtest_list["download_bandwidth"] = speedtest_results["download"]["bandwidth"]
-        speedtest_list["download_bytes"] = speedtest_results["download"]["bytes"]
-        speedtest_list["download_elapsed"] = speedtest_results["download"]["elapsed"]
-        speedtest_list["upload_bandwidth"] = speedtest_results["upload"]["bandwidth"]
-        speedtest_list["upload_bytes"] = speedtest_results["upload"]["bytes"]
-        speedtest_list["upload_elapsed"] = speedtest_results["upload"]["elapsed"]
-        speedtest_list["packetloss"] = speedtest_results["packetLoss"]
-        speedtest_list["server_id"] = speedtest_results["server"]["id"]
-        speedtest_list["server_host"] = speedtest_results["server"]["host"]
-        speedtest_list["server_port"] = speedtest_results["server"]["port"]
-        speedtest_list["server_name"] = speedtest_results["server"]["name"]
-        speedtest_list["server_location"] = speedtest_results["server"]["location"]
-        speedtest_list["server_country"] = speedtest_results["server"]["country"]
-        speedtest_list["server_ip"] = speedtest_results["server"]["ip"]
-
-        query = """INSERT INTO speedtest.speedtest (datetime, timestamp, ping_jitter, ping_latency, download_bandwidth, download_bytes, download_elapsed, upload_bandwidth, upload_bytes, upload_elapsed, packetloss, server_id, server_host, server_port, server_name, server_location, server_country, server_ip) VALUES (:datetime, :timestamp, :ping_jitter, :ping_latency, :download_bandwidth, :download_bytes, :download_elapsed, :upload_bandwidth, :upload_bytes, :upload_elapsed, :packetloss, :server_id, :server_host, :server_port, :server_name, :server_location, :server_country, :server_ip)"""
+        query = f"""INSERT INTO {config.db_dict["schema"]}.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
 
         try:
-            db_query(config.db_dict, query, speedtest_list)
+            db_query(config.db_dict, query, speedtest_dict)
         except Exception as some_exception:  # pylint: disable=broad-except
             logger.error("ERROR running db_query")
             logger.exception("EXCEPTION='%s'", str(some_exception))
