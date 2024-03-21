@@ -16,11 +16,11 @@ class Config:  # pylint: disable=too-many-instance-attributes
         """Application Variables."""
         self.app_dict = {
             "author": "Aaron Melton <aaron@aaronmelton.com>",
-            "date": "2023-11-26",
+            "date": "2024-03-20",
             "desc": "A Python script to capture speedtest JSON and insert it into a database.",
             "title": "speedtest_monitor",
             "url": "https://github.com/aaronmelton/speedtest_monitor",
-            "version": "0.4.0",
+            "version": "0.5.0",
         }
 
         # Logging Variables
