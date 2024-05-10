@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.5.1] - 2024-05-10
+### Changed
+- Bumping Python to 3.12 and updating all library versions.
+
+
 ## [0.5.0] - 2024-03-20
 ### Changed
 - Converted speedtest data type from list to dict.

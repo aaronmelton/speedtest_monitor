@@ -1,4 +1,5 @@
 """Speedtest Monitor."""
+
 # !/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
@@ -124,7 +125,8 @@ def main():
             "server_host": speedtest_results["server"]["host"],
         }
 
-        query = f"""INSERT INTO {config.db_dict["schema"]}.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
+        # query = f"""INSERT INTO {config.db_dict["schema"]}.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
+        query = """INSERT INTO speedtest.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
 
         try:
             db_query(config.db_dict, query, speedtest_dict)
