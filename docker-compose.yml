@@ -1,5 +1,4 @@
 ---
-version: "3"
 services:
   speedtest_monitor:
     build:
@@ -7,11 +6,11 @@ services:
       dockerfile: Dockerfile
     image: speedtest_monitor:latest
     environment:
-      - LOG_LEVEL=DEBUG
+      - LOG_LEVEL=INFO
       - LOG_PATH=/var/log/speedtest_monitor/
-      - DB_HOST=
-      - DB_USERNAME=
-      - DB_PASSWORD=
+      - DB_HOST=${DB_HOST}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
     container_name: speedtest_monitor
     network_mode: "bridge"
     volumes:

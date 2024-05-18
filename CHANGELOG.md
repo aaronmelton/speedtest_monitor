@@ -1,8 +1,23 @@
 # CHANGELOG
 
-## [0.5.1] - 2024-05-10
+## [0.6.0] - 2024-05-17
 ### Changed
 - Bumping Python to 3.12 and updating all library versions.
+- Dockerfile: Updating file to be more in line with the format I use for all
+  my projects.
+- docker-compose.yml: Pointing environment values to the system's environment
+  instead of a blank string.
+- Renamed some_list -> some_dict because its a dict and not a list.
+- Updating Speedtest to the newest versions introduced new changes:
+- Added --secure option to the command line
+- Speedtest JSON output changed so the speedtest_dict{} had to be updated to
+  match.  This also required a change to the SQL INSERT query.
+- grafana_dashboard.json: Renamed bandwidth -> throughput (since that is what
+  we're actually measuring); Adjusted any math from 0.000008 to 0.000001 to
+  correct the values the tool reports (bits instead of bytes); Removed the
+  Duration panel as the newest version of Speedtest doesnt track it.
+- speedtest_database.sql: Removed columns no longer tracked by the newest
+  version of Speedtest.
 
 
 ## [0.5.0] - 2024-03-20
