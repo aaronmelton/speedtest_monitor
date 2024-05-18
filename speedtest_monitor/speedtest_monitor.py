@@ -7,6 +7,7 @@
 import json
 import subprocess
 import sys
+from datetime import datetime
 from time import perf_counter
 
 import MySQLdb  # pylint: disable=import-error
@@ -20,14 +21,14 @@ logger = logging_handler.default
 logger_all = logging_handler.all
 
 
-def db_query(db_deets, query, some_list):
+def db_query(db_deets, query, some_dict):
     """Query database and return results.
 
     Args
     ----
     db_deets: dict
     query: str
-    some_list: dict
+    some_dict: dict
 
     Returns
     -------
@@ -40,16 +41,16 @@ def db_query(db_deets, query, some_list):
     logger.debug("host=='%s'", host)
     logger.debug("database=='%s'", database)
     logger.debug("query=='%s'", query)
-    logger.debug("some_list=='%s'", some_list)
+    logger.debug("some_dict=='%s'", some_dict)
     output_json = []
     database_connection = MySQLdb.connect(host, user, passwd, database)
     cursor = database_connection.cursor()
-    # If some_list is provided, this query will be writing changes to the database.
-    if some_list:
+    # If some_dict is provided, this query will be writing changes to the database.
+    if some_dict:
         try:
             try:
                 logger.info("Writing changes to database...")
-                cursor.execute(query, some_list.values())
+                cursor.execute(query, tuple(some_dict.values()))
             except Exception as some_exception:  # pylint: disable=broad-except
                 logger.error("ERROR running query.")
                 logger.exception("ERROR=='%s'", some_exception)
@@ -62,8 +63,8 @@ def db_query(db_deets, query, some_list):
             logger.error("ERROR running query: %s", str(query))
             logger.exception("ERROR=='%s'", some_exception)
 
-    # If some_list is NOT provided, this query will be retrieving data from the database.
-    if not some_list:
+    # If some_dict is NOT provided, this query will be retrieving data from the database.
+    if not some_dict:
         try:
             logger.info("Querying database...")
             cursor.execute(query)
@@ -117,16 +118,16 @@ def main():
 
     if speedtest_results:
         speedtest_dict = {
-            "timestamp": speedtest_results["timestamp"],
+            "datetime": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timestamp": int(datetime.strptime(speedtest_results["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()),
             "ping_latency": speedtest_results["ping"],
-            "download_bandwidth": speedtest_results["download"],
-            "upload_bandwidth": speedtest_results["upload"],
+            "download_throughput": int(speedtest_results["download"]),
+            "upload_throughput": int(speedtest_results["upload"]),
             "server_id": speedtest_results["server"]["id"],
             "server_host": speedtest_results["server"]["host"],
         }
 
-        # query = f"""INSERT INTO {config.db_dict["schema"]}.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
-        query = """INSERT INTO speedtest.speedtest (timestamp, ping_latency, download_bandwidth, upload_bandwidth, server_id, server_host) VALUES (:timestamp, :ping_latency, :download_bandwidth, :upload_bandwidth, :server_id, :server_host)"""
+        query = """INSERT INTO speedtest.speedtest (datetime, timestamp, ping_latency, download_throughput, upload_throughput, server_id, server_host) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
         try:
             db_query(config.db_dict, query, speedtest_dict)

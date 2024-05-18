@@ -1,74 +1,86 @@
-########################
-# START WITH BASE IMAGE
-########################
-
-ARG PYTHON_VER=3.10
+ARG PYTHON_VER=3.12
 ARG APP_NAME=speedtest_monitor
 
+##################
+### BASE IMAGE ###
+##################
+
 FROM python:${PYTHON_VER} AS base
-LABEL prune=true
 
-WORKDIR /usr/src/app
+ARG REPO_NAME
+LABEL name=${REPO_NAME} prune=true
 
-RUN pip install poetry
+WORKDIR /app
+
+RUN pip install --no-cache-dir poetry
 RUN poetry config virtualenvs.create false
 
 COPY pyproject.toml .
-RUN poetry install --no-dev
 
-###################
-# BUILD TEST IMAGE
-###################
+RUN poetry install --only main
+
+##################
+### TEST IMAGE ###
+##################
 
 FROM base AS test
-LABEL prune=true
+
+ARG REPO_NAME
+LABEL name=${REPO_NAME} prune=true
+
+WORKDIR /app
+
+COPY pyproject.toml .
+COPY tests/ tests/
+COPY speedtest_monitor/ speedtest_monitor/
 
 RUN poetry install
 
-COPY . .
-
-######################
-# PERFORM CODE CHECKS
-######################
-
-RUN echo '-->Running Flake8' && \
-    flake8 . && \
+RUN echo '-->Running Flake8p' && \
+    flake8p --config pyproject.toml . && \
     echo '-->Running Black' && \
-    black --check --diff . && \
+    black --config pyproject.toml --check --diff . && \
     echo '-->Running isort' && \
-    find . -name '*.py' | xargs isort && \
+    find . -name '*.py' -not -path '*/tests/*' | xargs isort --profile black --skip tests/ && \
     echo '-->Running Pylint' && \
     find . -name '*.py' | xargs pylint --rcfile=pyproject.toml && \
     echo '-->Running pydocstyle' && \
     pydocstyle . --config=pyproject.toml && \
     echo '-->Running Bandit' && \
-    bandit --recursive ./ --configfile pyproject.toml
+    bandit --recursive ./ --configfile pyproject.toml && \
+    echo '-->Running pytest' && \
+    coverage run -m pytest --color=yes -vvv && \
+    echo '-->Running coverage' && \
+    coverage report
 
-ENTRYPOINT ["pytest"]
+###################
+### FINAL IMAGE ###
+###################
 
-CMD ["--color=yes", "-vvv"]
-
-####################
-# BUILD FINAL IMAGE
-####################
-
-FROM python:${PYTHON_VER}-slim
+FROM python:${PYTHON_VER}-slim AS cli
 
 ARG PYTHON_VER
-ARG APP_NAME
 
-WORKDIR /usr/src/app
-
-# Install cron to schedule jobs; curl to pull speedtest binary; libmysqlclient for SQL connectivity
-RUN apt-get update && apt-get install --no-install-recommends -y cron curl default-libmysqlclient-dev && \
+RUN apt-get update && \
+    apt-get install --no-install-recommends -y curl default-libmysqlclient-dev && \
     apt-get clean
 
-# Install Speedtest CLI
-RUN curl -s https://install.speedtest.net/app/cli/install.deb.sh | bash
-RUN apt-get update && apt-get install --no-install-recommends -y speedtest && \
-    apt-get clean
+WORKDIR /app
+
+COPY entrypoint.sh /run/
+RUN chmod 755 /run/entrypoint.sh
+
+RUN addgroup docker && adduser --system --shell /bin/false --disabled-password --no-create-home docker --ingroup docker
 
 COPY --from=base /usr/local/lib/python${PYTHON_VER}/site-packages /usr/local/lib/python${PYTHON_VER}/site-packages
-COPY $APP_NAME /usr/src/app
+COPY --from=base /usr/local/bin /usr/local/bin
 
-ENTRYPOINT ["python", "speedtest_monitor.py"]
+COPY speedtest_monitor/*.py /app/
+
+RUN mkdir -p /app/db
+RUN mkdir -p /app/log/
+RUN chown -R docker:docker /app
+
+USER docker
+
+ENTRYPOINT ["/run/entrypoint.sh"]
