@@ -1,17 +1,17 @@
+![speedtest_monitor.png](speedtest_monitor.png)
+
 # Speedtest Monitor
 
 A Python script to capture speedtest JSON and insert it into a database.
-
-![speedtest_monitor.png](speedtest_monitor.png)
 
 ## Getting Started
 
 ### About This Code
 This script was written to track internet speed using Ookla's speed test.
 
-This repository contains the SQL schema and the Grafana dashboard JSON so you can track your own metrics.
+This repository contains the SQL schema and the Grafana dashboard JSON, so you can track your own metrics.
 
-### Prerequisites
+### Requirements
 * [speedtest binary from Ookla](https://www.speedtest.net/apps/cli); I'm using the Linux binary here.  (Installed automatically if using Dockerfile.)
 * MySQL database, built with the [database/speedtest_database.sql](https://github.com/aaronmelton/speedtest_monitor/blob/master/database/speedtest_database.sql) schema,  to store results.
 * Set environment variables (DB_HOST, DB_USERNAME, DB_PASSWORD) in `docker-compose.yml` OR in your environment if not using Docker.
@@ -21,7 +21,7 @@ This repository contains the SQL schema and the Grafana dashboard JSON so you ca
 
 ### Instructions For Use
 
-#### Running Python Natively
+#### Python Commands
 * To run the Python script:
 `python speedtest_monitor.py`
 

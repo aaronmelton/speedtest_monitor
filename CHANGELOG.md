@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.6.1] - 2024-07-18
+### Changed
+- Bumping all Python packages to most recent version.
+
+
 ## [0.6.0] - 2024-05-17
 ### Changed
 - Bumping Python to 3.12 and updating all library versions.
