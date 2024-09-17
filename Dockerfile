@@ -1,5 +1,5 @@
 ARG PYTHON_VER=3.12
-ARG APP_NAME=speedtest_monitor
+ARG REPO_NAME=speedtest_monitor
 
 ##################
 ### BASE IMAGE ###
@@ -67,20 +67,22 @@ RUN apt-get update && \
 
 WORKDIR /app
 
-COPY entrypoint.sh /run/
-RUN chmod 755 /run/entrypoint.sh
+COPY entrypoint.sh .
+RUN chmod 755 /app/entrypoint.sh
 
 RUN addgroup docker && adduser --system --shell /bin/false --disabled-password --no-create-home docker --ingroup docker
+
+RUN mkdir -p /app/log/
 
 COPY --from=base /usr/local/lib/python${PYTHON_VER}/site-packages /usr/local/lib/python${PYTHON_VER}/site-packages
 COPY --from=base /usr/local/bin /usr/local/bin
 
-COPY speedtest_monitor/*.py /app/
+# .dockerignore required to prevent copying unwanted files into image
+COPY ./speedtest_monitor .
 
 RUN mkdir -p /app/db
-RUN mkdir -p /app/log/
 RUN chown -R docker:docker /app
 
 USER docker
 
-ENTRYPOINT ["/run/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]

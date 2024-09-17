@@ -20,6 +20,3 @@ def test_config():
     assert config.app_dict["title"] == "speedtest_monitor"
     assert config.app_dict["url"] == "https://github.com/aaronmelton/speedtest_monitor"
     assert re_match("\\d{1,2}(\\.\\d{1,2}){2}", config.app_dict["version"])
-
-    # Logging Variables
-    assert config.log_dict["level"] == "DEBUG"

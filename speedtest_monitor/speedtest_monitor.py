@@ -10,7 +10,7 @@ import sys
 from datetime import datetime
 from time import perf_counter
 
-import MySQLdb  # pylint: disable=import-error
+import MySQLdb
 from aaron_common_libs.common_funcs import pretty_print
 from aaron_common_libs.logger.custom_logger import CustomLogger
 from config import Config
@@ -21,79 +21,43 @@ logger = logging_handler.default
 logger_all = logging_handler.all
 
 
-def db_query(db_deets, query, some_dict):
+def db_query(db_details, query, some_dict):
     """Query database and return results.
 
-    Args
-    ----
-    db_deets: dict
-    query: str
-    some_dict: dict
+    Args:
+        db_details (dict)
+        query (str)
+        some_dict (dict)
 
-    Returns
-    -------
-    output_json: str
+    Returns:
+        output_json (str)
     """
-    host = db_deets["host"]
-    user = db_deets["username"]
-    passwd = db_deets["password"]
-    database = db_deets["schema"]
-    logger.debug("host=='%s'", host)
-    logger.debug("database=='%s'", database)
-    logger.debug("query=='%s'", query)
-    logger.debug("some_dict=='%s'", some_dict)
-    output_json = []
-    database_connection = MySQLdb.connect(host, user, passwd, database)
+    output_json = {}
+    database_connection = MySQLdb.connect(
+        db_details["host"], db_details["username"], db_details["password"], db_details["schema_name"]
+    )
     cursor = database_connection.cursor()
-    # If some_dict is provided, this query will be writing changes to the database.
-    if some_dict:
-        try:
-            try:
-                logger.info("Writing changes to database...")
-                cursor.execute(query, tuple(some_dict.values()))
-            except Exception as some_exception:  # pylint: disable=broad-except
-                logger.error("ERROR running query.")
-                logger.exception("ERROR=='%s'", some_exception)
-            try:
-                database_connection.commit()
-            except Exception as some_exception:  # pylint: disable=broad-except
-                logger.exception("ERROR=='%s'", some_exception)
-                logger.error("ERROR committing changes.")
-        except Exception as some_exception:  # pylint: disable=broad-except
-            logger.error("ERROR running query: %s", str(query))
-            logger.exception("ERROR=='%s'", some_exception)
-
-    # If some_dict is NOT provided, this query will be retrieving data from the database.
-    if not some_dict:
-        try:
-            logger.info("Querying database...")
-            cursor.execute(query)
-            # Convert SQL output to JSON.  This way we can iterate
-            # through key:value pairs instead of worrying about adjusting
-            # list positions if we change the query
-            field_names = [i[0] for i in cursor.description]
-            results = cursor.fetchall()
-            for row in results:
-                output_json.append(dict(zip(field_names, row)))
-        except Exception as some_exception:  # pylint: disable=broad-except
-            logger.error("ERROR running query: %s", str(query))
-            logger.exception("ERROR=='%s'", some_exception)
+    try:  # Execute database query
+        logger.info("Writing changes to database...")
+        output_json = cursor.execute(
+            query.format(schema_name=db_details["schema_name"], table_name=db_details["table_name"]),
+            some_dict.values(),
+        )
+    except Exception as some_exception:  # pylint: disable=broad-exception-caught
+        logger.error("ERROR running query.")
+        logger.exception("ERROR=='%s'", some_exception)
+    try:  # Python MySQL connector does not autocommit
+        database_connection.commit()
+    except Exception as some_exception:  # pylint: disable=broad-exception-caught
+        logger.exception("ERROR=='%s'", some_exception)
+        logger.error("ERROR committing changes.")
 
     database_connection.close()
-    # logger.debug("output_json==%s", output_json)
     return output_json
 
 
 def main():
-    """Main Function.
-
-    Args
-    ----
-
-    Returns
-    -------
-    None
-    """
+    """Do Something."""
     start_time = perf_counter()
 
     logger.info("")
@@ -127,7 +91,7 @@ def main():
             "server_host": speedtest_results["server"]["host"],
         }
 
-        query = """INSERT INTO speedtest.speedtest (datetime, timestamp, ping_latency, download_throughput, upload_throughput, server_id, server_host) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+        query = """INSERT INTO {schema_name}.{table_name} (datetime, timestamp, ping_latency, download_throughput, upload_throughput, server_id, server_host) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
 
         try:
             db_query(config.db_dict, query, speedtest_dict)
