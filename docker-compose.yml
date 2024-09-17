@@ -6,12 +6,12 @@ services:
       dockerfile: Dockerfile
     image: speedtest_monitor:latest
     environment:
-      - LOG_LEVEL=INFO
-      - LOG_PATH=/var/log/speedtest_monitor/
-      - DB_HOST=${DB_HOST}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-    container_name: speedtest_monitor
-    network_mode: "bridge"
+      - SPEEDTEST_LOG_LEVEL=${SPEEDTEST_LOG_LEVEL}
+      - SPEEDTEST_LOG_PATH=${SPEEDTEST_LOG_PATH}
+      - SPEEDTEST_DB_HOSTNAME=${SPEEDTEST_DB_HOSTNAME}
+      - SPEEDTEST_DB_USERNAME=${SPEEDTEST_DB_USERNAME}
+      - SPEEDTEST_DB_PASSWORD=${SPEEDTEST_DB_PASSWORD}
+      - SPEEDTEST_DB_SCHEMA=${SPEEDTEST_DB_SCHEMA}
+      - SPEEDTEST_DB_TABLE=${SPEEDTEST_DB_TABLE}
     volumes:
-      - /var/log/speedtest_monitor:/var/log/speedtest_monitor:z
+      - /var/log/speedtest_monitor:/app/log:z

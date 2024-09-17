@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## [0.6.2] - 2024-09-17
+### Changed
+- Bumping all Python packages to most recent version.
+- Changed environment variables so they will be unique.
+- Cleaning up Dockerfiles to be more in line with my other projects.
+
+
 ## [0.6.1] - 2024-07-18
 ### Changed
 - Bumping all Python packages to most recent version.
