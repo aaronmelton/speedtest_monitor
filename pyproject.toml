@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "speedtest_monitor"
-version = "0.6.2"
+version = "0.7.0"
 description = "A Python script to capture speedtest JSON and insert it into a database."
 authors = ["Aaron Melton <aaron@aaronmelton.com>"]
 
@@ -19,7 +19,7 @@ isort = "^5.13.2"
 pydocstyle = "^6.3.0"
 pylint = "^3.2.7"
 pytest = "^8.3.3"
-pytest-env = "^1.1.4"
+pytest-env = "^1.1.5"
 toml = "^0.10.2"
 Flake8-pyproject = "^1.2.3"
 

@@ -1,3 +1,3 @@
 #!/bin/sh
 
-/usr/local/bin/python /app/speedtest_monitor.py
+/usr/local/bin/python /app/speedtest_monitor.py speedtest --pushpull

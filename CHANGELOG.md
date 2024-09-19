@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## [0.7.0] - 2024-09-19
+### Changed
+- Moved code that calls Speedtest binary into its own function to improve code
+  reuse.
+- Added an argument/flag to show test results (pull) and insert them into a
+  database (pull-push).
+- Improved code to remove static path to the speedtest bin and have the script
+  dynamically-determine where the binary is.
+
+
 ## [0.6.2] - 2024-09-17
 ### Changed
 - Bumping all Python packages to most recent version.
