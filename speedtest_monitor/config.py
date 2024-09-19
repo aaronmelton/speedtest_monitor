@@ -21,7 +21,7 @@ class Config:
             "desc": "A Python script to capture speedtest JSON and insert it into a database.",
             "title": "speedtest_monitor",
             "url": "https://github.com/aaronmelton/speedtest_monitor",
-            "version": "0.7.0",
+            "version": "0.7.1",
         }
 
         # Logging Variables

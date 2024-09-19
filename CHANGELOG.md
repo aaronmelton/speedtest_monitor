@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## [0.7.1] - 2024-09-19
+### Fixed
+- entrypoint.sh: Corrected the wrong flag.  /facepalm
+
+
 ## [0.7.0] - 2024-09-19
 ### Changed
 - Moved code that calls Speedtest binary into its own function to improve code
