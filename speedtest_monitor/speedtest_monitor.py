@@ -5,13 +5,14 @@
 #
 
 import json
+import shutil
 import subprocess
 import sys
 from datetime import datetime
 from time import perf_counter
 
 import MySQLdb
-from aaron_common_libs.common_funcs import pretty_print
+from aaron_common_libs.common_funcs import argument, cli, pretty_print, subcommand
 from aaron_common_libs.logger.custom_logger import CustomLogger
 from config import Config
 
@@ -56,6 +57,71 @@ def db_query(db_details, query, some_dict):
     return output_json
 
 
+def run_speedtest():
+    """Run speedtest binary and capture results.
+
+    Args:
+        None
+
+    Returns:
+        test_results (dict)
+    """
+    test_results = {}
+    speedtest_path = shutil.which("speedtest")
+    if speedtest_path is None:
+        raise FileNotFoundError("The 'speedtest' executable was not found on your system.")
+    try:
+        process = subprocess.run([speedtest_path, "--json"], check=True, capture_output=True)
+        speedtest_results = json.loads(process.stdout.decode("utf-8"))
+        test_results = {
+            "datetime": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "timestamp": int(datetime.strptime(speedtest_results["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()),
+            "ping_latency": speedtest_results["ping"],
+            "download_throughput": int(speedtest_results["download"]),
+            "upload_throughput": int(speedtest_results["upload"]),
+            "server_id": speedtest_results["server"]["id"],
+            "server_host": speedtest_results["server"]["host"],
+        }
+        logger.debug("test_results==%s", pretty_print(speedtest_results))
+        logger.info("Speedtest run successfully.")
+    except Exception as some_exception:  # pylint: disable=broad-except
+        logger.error("ERROR running speed test.")
+        logger.exception("EXCEPTION='%s'", str(some_exception))
+    return test_results
+
+
+# Sub-Commands for TEST operations
+@subcommand(
+    [
+        argument("--pull", help="Collect Speedtest results and print to console.", action="store_true", required=False),
+        argument(
+            "--pullpush",
+            help="Collect Speedtest results and store them in a database.",
+            action="store_true",
+            required=False,
+        ),
+    ]
+)
+def speedtest(args):
+    """Subcommand options for test operations."""
+    logger.debug("args==%s", vars(args))
+    test_results = {}
+    if args.pull:
+        test_results = run_speedtest()
+    if args.pullpush:
+        test_results = run_speedtest()
+        if test_results:
+            query = """INSERT INTO {schema_name}.{table_name} (datetime, timestamp, ping_latency, download_throughput, upload_throughput, server_id, server_host) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
+            try:
+                db_query(config.db_dict, query, test_results)
+            except Exception as some_exception:  # pylint: disable=broad-except
+                logger.error("ERROR running db_query")
+                logger.exception("EXCEPTION='%s'", str(some_exception))
+        else:
+            logger.error("Error running speed test.")
+    return test_results
+
+
 def main():
     """Do Something."""
     start_time = perf_counter()
@@ -69,37 +135,21 @@ def main():
         config.app_dict["date"],
     )
 
-    logger.info("Running speedtest...")
-    try:
-        process = subprocess.run(["/usr/local/bin/speedtest", "--json"], check=True, capture_output=True)
-        speedtest_results = json.loads(process.stdout.decode("utf-8"))
-        logger.debug("speedtest_results==%s", pretty_print(speedtest_results))
-        logger.info("Speedtest run successfully.")
-    except Exception as some_exception:  # pylint: disable=broad-except
-        speedtest_results = None
-        logger.error("ERROR running speed test.")
-        logger.exception("EXCEPTION='%s'", str(some_exception))
-
-    if speedtest_results:
-        speedtest_dict = {
-            "datetime": datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "timestamp": int(datetime.strptime(speedtest_results["timestamp"], "%Y-%m-%dT%H:%M:%S.%fZ").timestamp()),
-            "ping_latency": speedtest_results["ping"],
-            "download_throughput": int(speedtest_results["download"]),
-            "upload_throughput": int(speedtest_results["upload"]),
-            "server_id": speedtest_results["server"]["id"],
-            "server_host": speedtest_results["server"]["host"],
-        }
-
-        query = """INSERT INTO {schema_name}.{table_name} (datetime, timestamp, ping_latency, download_throughput, upload_throughput, server_id, server_host) VALUES (%s, %s, %s, %s, %s, %s, %s)"""
-
-        try:
-            db_query(config.db_dict, query, speedtest_dict)
-        except Exception as some_exception:  # pylint: disable=broad-except
-            logger.error("ERROR running db_query")
-            logger.exception("EXCEPTION='%s'", str(some_exception))
+    required_vars = {}
+    find_null_vars = [value for value in required_vars.items() if None is value[1]]
+    if find_null_vars:
+        logger.error("Missing Environment Variable(s): %s", find_null_vars)
+        print(f"\nERROR: Missing Environment Variable(s): {find_null_vars}")
     else:
-        logger.error("Error running speed test.")
+        args = cli.parse_args()
+        if args.subcommand is None:
+            cli.print_help()
+        else:
+            arg_results = args.func(args)
+            if arg_results:
+                print(pretty_print(arg_results))
+            else:
+                cli.print_help()
 
     logger_all.info("Total Execution Time: %s seconds", round(perf_counter() - start_time, 2))
     logger_all.info("----------   STOP STOP STOP  ----------")
