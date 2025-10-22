@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## [0.8.0] - 2025-10-22
+### Changed
+- Updated Python version from 3.12 to 3.13 in pyproject.toml and Dockerfile.
+- Updated pyproject.toml syntax from [tool.poetry.dev-dependencies] to [tool.poetry.group.dev.dependencies] (modern Poetry format).
+- Updated all Poetry library dependencies to latest versions:
+  - bandit (1.7.9 -> 1.8.0)
+  - black (24.8.0 -> 25.1.0)
+  - coverage (7.6.1 -> 7.6.10)
+  - pylint (3.2.7 -> 3.3.4)
+  - pytest (8.3.3 -> 8.3.4)
+  - mysqlclient (2.2.4 -> 2.2.6)
+
+
 ## [0.7.1] - 2024-09-19
 ### Fixed
 - entrypoint.sh: Corrected the wrong flag.  /facepalm
