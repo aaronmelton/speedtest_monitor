@@ -1,4 +1,4 @@
-ARG PYTHON_VER=3.12
+ARG PYTHON_VER=3.13
 ARG REPO_NAME=speedtest_monitor
 
 ##################
