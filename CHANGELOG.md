@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## [0.8.1] - 2026-04-22
+### Security
+- Resolved 14 Dependabot alerts by upgrading vulnerable packages in poetry.lock:
+  - azure-core (1.31.0 -> 1.39.0): deserialization of untrusted data (high).
+  - black (25.9.0 -> 26.3.1): arbitrary file writes via unsanitized cache file name (high).
+  - cryptography (43.0.1 -> 46.0.7): SECT curve subgroup attack (high); vulnerable OpenSSL (low); incomplete DNS name constraint enforcement (low).
+  - pygments (2.18.0 -> 2.20.0): ReDoS in GUID regex (low).
+  - pytest (8.4.2 -> 9.0.3): vulnerable tmpdir handling (medium).
+  - requests (2.32.3 -> 2.33.1): insecure temp file reuse in extract_zipped_paths (medium); .netrc credential leak via malicious URLs (medium).
+  - urllib3 (2.2.3 -> 2.6.3): decompression-bomb safeguards bypassed via redirects (high); improper streaming decompression of highly compressed data (high); unbounded decompression chain links (high); redirects not controlled in browsers/Node.js (medium); redirects not disabled when retries disabled (medium).
+### Changed
+- Bumped direct dev-dependency constraints in pyproject.toml:
+  - black (^25.1.0 -> ^26.3.1)
+  - pytest (^8.3.4 -> ^9.0.3)
+
+
 ## [0.8.0] - 2025-10-22
 ### Changed
 - Updated Python version from 3.12 to 3.13 in pyproject.toml and Dockerfile.
